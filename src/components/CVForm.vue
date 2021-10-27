@@ -19,8 +19,8 @@
               class="form-control"
               id="firstName"
             />
-            <div class="error-message" v-if="!v$.firstName.required">
-              Field is required
+            <div class="error-message" v-if="v$.firstName.$error">
+              Field has to be at least 2 characters long.
             </div>
           </div>
         </div>
@@ -34,6 +34,9 @@
               class="form-control"
               id="lastName"
             />
+            <div class="error-message" v-if="v$.lastName.$error">
+              Field has to be at least 2 characters long.
+            </div>
           </div>
         </div>
       </div>
@@ -49,10 +52,13 @@
               id="email"
             />
           </div>
+          <div class="error-message" v-if="v$.email.$error">
+            Invalid e-mail address.
+          </div>
         </div>
         <div class="col-md-5">
           <div class="form-group">
-            <label for="phoneNumber">Phone number</label>
+            <label for="phoneNumber">Phone number*</label>
             <input
               v-model="v$.phoneNumber.$model"
               :class="status(v$.phoneNumber)"
@@ -60,40 +66,61 @@
               class="form-control"
               id="phoneNumber"
             />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group">
-          <label for="address">Address</label>
-          <input
-            v-model="address"
-            type="text"
-            class="form-control"
-            id="address"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="postal">Postal code</label>
-            <input
-              v-model="postalCode"
-              type="text"
-              class="form-control"
-              id="postal"
-            />
-          </div>
-        </div>
-        <div class="col-md-9">
-          <div class="form-group">
-            <label for="city">City</label>
-            <input v-model="city" type="text" class="form-control" id="city" />
+            <div class="error-message" v-if="v$.phoneNumber.$error">
+              It has to be a number.
+            </div>
           </div>
         </div>
       </div>
       <div v-if="isAddInfoVisible" id="additionalInfo">
+        <div class="row">
+          <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea
+              v-model="summary"
+              class="form-control"
+              name="summary"
+              id="summary"
+              rows="2"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input
+              v-model="address"
+              type="text"
+              class="form-control"
+              id="address"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="postal">Postal code</label>
+              <input
+                v-model="postalCode"
+                type="text"
+                class="form-control"
+                id="postal"
+              />
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input
+                v-model="city"
+                type="text"
+                class="form-control"
+                id="city"
+              />
+            </div>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -137,7 +164,7 @@
           </div>
         </div>
       </div>
-      <!-- Additional info -->
+
       <br />
       <div class="row">
         <button
@@ -207,6 +234,7 @@
       <br />
       <div class="row">
         <button
+          :disabled="this.v$.$invalid"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#CVModal"
@@ -241,7 +269,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="cv-container">
+            <div id="#cv-container" ref="cvContainer" class="cv-container">
               <header class="cv-header">
                 <p>Resume</p>
                 <p></p>
@@ -249,49 +277,45 @@
               <div class="row">
                 <p class="lead">{{ firstName }} {{ lastName }}</p>
               </div>
+              <div v-if="summary" class="row">
+                <p class="lead text-center">{{ summary }}</p>
+              </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="personal-data">
                     <h4 class="h4">
                       <i class="fas fa-id-card"></i> Personal data
                     </h4>
-
-                    E-mail: {{ email }}
-                    <br />
-                    Phone-number: {{ phoneNumber }}
-                    <br />
-                    Address: {{ address }} {{ postalCode }}, {{ city }}
-                    <br />
-                    Date of birth: {{ dob }}
-                    <br />
-                    Sex: {{ sex }}
-                    <br />
-                    Website: {{ webPage }}
-                    <br />
-                    Nationality: {{ nationality }}
+                    <p>E-mail: {{ email }}</p>
+                    <p>Phone-number: {{ phoneNumber }}</p>
+                    <p v-if="address">
+                      Address: {{ address }} {{ postalCode }}, {{ city }}
+                    </p>
+                    <p v-if="dob">Date of birth: {{ dob }}</p>
+                    <p v-if="sex">Sex: {{ sex }}</p>
+                    <p v-if="webPage">Website: {{ webPage }}</p>
+                    <p v-if="nationality">Nationality: {{ nationality }}</p>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <h4 class="h4">
                     <i class="fas fa-user-graduate"></i> Education
                   </h4>
-                  School: {{ school }}
-                  <br />
-                  Subject: {{ subject }}
-                  <br />
-                  <br />
+                  <p v-if="school">School: {{ school }}</p>
+                  <p v-if="subject">Subject: {{ subject }}</p>
                   <h4 class="h4">
                     <i class="fas fa-briefcase"></i> Work experience
                   </h4>
-                  Job: {{ job }}
-                  <br />
-                  Employer: {{ employer }}
+                  <p v-if="job">Job: {{ job }}</p>
+                  <p v-if="employer">Employer: {{ employer }}</p>
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save file</button>
+            <button @click="savePDF" type="button" class="btn btn-primary">
+              Save file
+            </button>
           </div>
         </div>
       </div>
@@ -302,6 +326,7 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, email, numeric } from "@vuelidate/validators";
+import * as html2pdf from "html2pdf.js";
 
 export default {
   name: "CVForm",
@@ -317,7 +342,7 @@ export default {
       address: "",
       postalCode: "",
       city: "",
-      dob: new Date(),
+      dob: "",
       sex: "",
       webPage: "",
       nationality: "",
@@ -325,6 +350,7 @@ export default {
       employer: "",
       school: "",
       subject: "",
+      summary: "",
     };
   },
   validations() {
@@ -360,6 +386,14 @@ export default {
     toggleAdditionalInfo() {
       this.isAddInfoVisible = !this.isAddInfoVisible;
     },
+    savePDF() {
+      const opt = {
+        margin: 1,
+        filename: "CV.pdf",
+      };
+
+      html2pdf(this.$refs.cvContainer, opt);
+    },
     status(validation) {
       return {
         error: validation.$error,
@@ -367,9 +401,7 @@ export default {
       };
     },
   },
-  updated() {
-    console.log(this.v$.firstName);
-  },
+  updated() {},
 };
 </script>
 
@@ -388,7 +420,7 @@ export default {
 .main {
   margin-top: 4em;
   margin-bottom: 4em;
-  width: 40%;
+  width: 60%;
   border-radius: 10px;
   background: #ffffff;
   padding: 3em;
@@ -405,6 +437,7 @@ export default {
   float: right;
 }
 .cv-container {
+  padding: 1em;
   color: #015c83;
 }
 .cv-header {
@@ -435,6 +468,7 @@ export default {
 
 .error-message {
   color: red;
-  font-size: 0.5em;
+  font-size: 0.65em;
+  text-align: center;
 }
 </style>
