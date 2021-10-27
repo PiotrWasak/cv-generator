@@ -1,5 +1,7 @@
 # cv-generator
 
+LIVE: https://wasak.ga/cv-generator/
+
 ## Project setup
 ```
 npm install
