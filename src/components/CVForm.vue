@@ -376,7 +376,7 @@ export default {
   computed: {
     addBtnText() {
       let text = "";
-      this.isAddInfoVisible === true
+      this.isAddInfoVisible
         ? (text = "➖ Hide additional info")
         : (text = "➕ Show additional info");
       return text;
