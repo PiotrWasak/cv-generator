@@ -418,8 +418,8 @@ export default {
 }
 
 .main {
-  margin-top: 4em;
-  margin-bottom: 4em;
+  padding-top: 4em;
+  padding-bottom: 4em;
   width: 60%;
   border-radius: 10px;
   background: #ffffff;
